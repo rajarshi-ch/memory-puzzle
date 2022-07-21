@@ -6,14 +6,14 @@ enum PuzzleStatus { incomplete, complete }
 
 enum TileMovementStatus { nothingTapped, cannotBeMoved, moved }
 
-enum PuzzleIntermediateStatus { noCardUp, oneCardUp, twoCardsUp }
+enum PuzzleIntermediateStatus { neutral , correctMatch , wrongMatch }
 
 class PuzzleState extends Equatable {
   const PuzzleState({
     this.puzzle = const Puzzle(tiles: []),
     this.puzzleStatus = PuzzleStatus.incomplete,
     this.tileMovementStatus = TileMovementStatus.nothingTapped,
-    this.puzzleIntermediateStatus = PuzzleIntermediateStatus.noCardUp,
+    this.puzzleIntermediateStatus = PuzzleIntermediateStatus.neutral,
     this.numberOfCorrectTiles = 0,
     this.numberOfMoves = 0,
     this.lastTappedTile,

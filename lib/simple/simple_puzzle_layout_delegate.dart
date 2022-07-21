@@ -302,8 +302,6 @@ class SimplePuzzleBoard extends StatelessWidget {
   /// The spacing between each tile from [tiles].
   final double spacing;
 
-
-
   @override
   Widget build(BuildContext context) {
     return GridView.count(
@@ -325,31 +323,23 @@ abstract class _TileFontSize {
 }
 
 const Map<int, String> _tileValueLabelMap = {
-  1 : '1',
-  2 : '1',
-
-  3 : '2',
-  4 : '2',
-
-  5 : '3',
-  6 : '3',
-
-  7 : '4',
-  8 : '4',
-
-  9 : '5',
-  10 : '5',
-
-  11 : '6',
-  12 : '6',
-
-  13 : '7',
-  14 : '7',
-
-  15 : '8',
-  16 : '8',
+  1: '1',
+  2: '1',
+  3: '2',
+  4: '2',
+  5: '3',
+  6: '3',
+  7: '4',
+  8: '4',
+  9: '5',
+  10: '5',
+  11: '6',
+  12: '6',
+  13: '7',
+  14: '7',
+  15: '8',
+  16: '8',
 };
-
 
 /// {@template simple_puzzle_tile}
 /// Displays the puzzle tile associated with [tile] and
@@ -374,7 +364,6 @@ class SimplePuzzleTile extends StatelessWidget {
   /// The state of the puzzle.
   final PuzzleState state;
 
-
   @override
   Widget build(BuildContext context) {
     final theme = context.select((ThemeBloc bloc) => bloc.state.theme);
@@ -389,7 +378,6 @@ class SimplePuzzleTile extends StatelessWidget {
           borderRadius: BorderRadius.all(
             Radius.circular(12),
           ),
-
         ),
       ).copyWith(
         foregroundColor: MaterialStateProperty.all(PuzzleColors.white),
@@ -404,25 +392,44 @@ class SimplePuzzleTile extends StatelessWidget {
             }
           },
         ),
-
-
+        side: MaterialStateBorderSide.resolveWith((states) {
+          if( tile.isFaceUp ){
+            if (state.puzzleIntermediateStatus ==
+                PuzzleIntermediateStatus.wrongMatch) {
+              return const BorderSide(
+                color: Colors.red,
+                width: 2,
+              );
+            } else if ( state.puzzleIntermediateStatus ==
+                PuzzleIntermediateStatus.correctMatch) {
+              return const BorderSide(
+                color: Colors.green,
+                width: 8,
+              );
+            } else {
+              return null;
+            }
+          } else {
+            return null;
+          }
+        }),
       ),
       onPressed: state.puzzleStatus == PuzzleStatus.incomplete
           ? () => context.read<PuzzleBloc>().add(TileTapped(tile))
           : null,
-      child: tile.isFaceUp ? Text(
-        _tileValueLabelMap[tile.value] ?? '',
-        semanticsLabel: context.l10n.puzzleTileLabelText(
-          tile.value.toString(),
-          tile.currentPosition.x.toString(),
-          tile.currentPosition.y.toString(),
-        ),
-      ) : const SizedBox(),
+      child: tile.isFaceUp
+          ? Text(
+              _tileValueLabelMap[tile.value] ?? '',
+              semanticsLabel: context.l10n.puzzleTileLabelText(
+                tile.value.toString(),
+                tile.currentPosition.x.toString(),
+                tile.currentPosition.y.toString(),
+              ),
+            )
+          : const SizedBox(),
     );
   }
 }
-
-
 
 /// {@template puzzle_shuffle_button}
 /// Displays the button to shuffle the puzzle.

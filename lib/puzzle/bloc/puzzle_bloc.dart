@@ -75,18 +75,31 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
         if(puzzle.getNumberOfRemainingCards().isEven){
 
           if(puzzle.areTilesMatching()){
+            emit(
+              state.copyWith(puzzleIntermediateStatus:
+              PuzzleIntermediateStatus.correctMatch,),
+            );
+
             await Future.delayed(delay, () {
               _removeMatchingCards(emit);
             });
           }else {
             /// After two non matching cards are flipped, flip all cards face down
             /// after a delay
-
+            emit(
+              state.copyWith(puzzleIntermediateStatus:
+              PuzzleIntermediateStatus.wrongMatch,),
+            );
             await Future.delayed(delay, () {
               _flipAllCardsBack(emit);
             });
           }
 
+        } else {
+          emit(
+            state.copyWith(puzzleIntermediateStatus:
+            PuzzleIntermediateStatus.neutral,),
+          );
         }
       }
 
