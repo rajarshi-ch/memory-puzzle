@@ -302,6 +302,8 @@ class SimplePuzzleBoard extends StatelessWidget {
   /// The spacing between each tile from [tiles].
   final double spacing;
 
+
+
   @override
   Widget build(BuildContext context) {
     return GridView.count(
@@ -321,6 +323,33 @@ abstract class _TileFontSize {
   static double medium = 50;
   static double large = 54;
 }
+
+const Map<int, String> _tileValueLabelMap = {
+  1 : '1',
+  2 : '1',
+
+  3 : '2',
+  4 : '2',
+
+  5 : '3',
+  6 : '3',
+
+  7 : '4',
+  8 : '4',
+
+  9 : '5',
+  10 : '5',
+
+  11 : '6',
+  12 : '6',
+
+  13 : '7',
+  14 : '7',
+
+  15 : '8',
+  16 : '8',
+};
+
 
 /// {@template simple_puzzle_tile}
 /// Displays the puzzle tile associated with [tile] and
@@ -345,6 +374,7 @@ class SimplePuzzleTile extends StatelessWidget {
   /// The state of the puzzle.
   final PuzzleState state;
 
+
   @override
   Widget build(BuildContext context) {
     final theme = context.select((ThemeBloc bloc) => bloc.state.theme);
@@ -359,12 +389,13 @@ class SimplePuzzleTile extends StatelessWidget {
           borderRadius: BorderRadius.all(
             Radius.circular(12),
           ),
+
         ),
       ).copyWith(
         foregroundColor: MaterialStateProperty.all(PuzzleColors.white),
         backgroundColor: MaterialStateProperty.resolveWith<Color?>(
           (states) {
-            if (tile.value == state.lastTappedTile?.value) {
+            if (tile.isFaceUp) {
               return theme.pressedColor;
             } else if (states.contains(MaterialState.hovered)) {
               return theme.hoverColor;
@@ -373,12 +404,14 @@ class SimplePuzzleTile extends StatelessWidget {
             }
           },
         ),
+
+
       ),
       onPressed: state.puzzleStatus == PuzzleStatus.incomplete
           ? () => context.read<PuzzleBloc>().add(TileTapped(tile))
           : null,
       child: tile.isFaceUp ? Text(
-        tile.value.toString(),
+        _tileValueLabelMap[tile.value] ?? '',
         semanticsLabel: context.l10n.puzzleTileLabelText(
           tile.value.toString(),
           tile.currentPosition.x.toString(),
@@ -388,6 +421,8 @@ class SimplePuzzleTile extends StatelessWidget {
     );
   }
 }
+
+
 
 /// {@template puzzle_shuffle_button}
 /// Displays the button to shuffle the puzzle.
