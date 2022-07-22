@@ -44,6 +44,7 @@ flutter:
     - assets/images/dashatar/green/
     - assets/images/dashatar/blue/
     - assets/images/dashatar/yellow/
+    - assets/images/dashatar/animals/
     - assets/rive/
   fonts:
     - family: GoogleSans
