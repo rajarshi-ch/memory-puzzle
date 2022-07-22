@@ -9,6 +9,8 @@ import 'package:very_good_slide_puzzle/puzzle/puzzle.dart';
 import 'package:very_good_slide_puzzle/simple/simple.dart';
 import 'package:very_good_slide_puzzle/theme/theme.dart';
 import 'package:very_good_slide_puzzle/typography/typography.dart';
+import 'package:rive/rive.dart';
+import 'package:flutter/rendering.dart';
 
 /// {@template simple_puzzle_layout_delegate}
 /// A delegate for computing the layout of the puzzle UI
@@ -53,7 +55,7 @@ class SimplePuzzleLayoutDelegate extends PuzzleLayoutDelegate {
   }
 
   @override
-  Widget backgroundBuilder(PuzzleState state) {
+  Widget backgroundBuilder(PuzzleState state, BuildContext context) {
     return Positioned(
       right: 0,
       bottom: 0,
@@ -61,32 +63,124 @@ class SimplePuzzleLayoutDelegate extends PuzzleLayoutDelegate {
         small: (_, __) => SizedBox(
           width: 184,
           height: 118,
-          child: Image.asset(
-            'assets/images/simple_dash_small.png',
-            key: const Key('simple_puzzle_dash_small'),
+          child: InkWell(
+            onTap: () => _showMyDialog(context),
+            child: const RiveAnimation.asset('rive/face.riv'),
           ),
         ),
         medium: (_, __) => SizedBox(
           width: 380.44,
           height: 214,
-          child: Image.asset(
-            'assets/images/simple_dash_medium.png',
-            key: const Key('simple_puzzle_dash_medium'),
+          child: InkWell(
+            onTap: () => _showMyDialog(context),
+            child: const RiveAnimation.asset('rive/face.riv'),
           ),
         ),
         large: (_, __) => Padding(
           padding: const EdgeInsets.only(bottom: 53),
           child: SizedBox(
-            width: 568.99,
-            height: 320,
-            child: Image.asset(
-              'assets/images/simple_dash_large.png',
-              key: const Key('simple_puzzle_dash_large'),
-            ),
+              width: 568.99,
+              height: 320,
+              child: InkWell(
+                onTap: () => _showMyDialog(context),
+                child: const RiveAnimation.asset('rive/face.riv'),
+              ),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _showMyDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Container(
+                width: 300,
+                height: 300,
+                margin: const EdgeInsets.only(top: 30, bottom: 15),
+                decoration: BoxDecoration(
+                  color: Colors.lightBlueAccent.shade100,
+                  borderRadius: BorderRadius.circular(16.0),
+                  border:
+                      Border.all(width: 2.0, color: const Color(0xFF336083)),
+                ),
+                child: ListView(
+                  padding: const EdgeInsets.only(
+                    left: 16.0,
+                    right: 16.0,
+                    bottom: 24.0,
+                  ),
+                  children: _dialogContent(context),
+                ),
+              ),
+              Image.asset(
+                'assets/images/settings_banner.png',
+                width: 200,
+              ),
+              Positioned(
+                bottom: 0,
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    child: Text('CLOSE', style: TextStyle(height: 1)),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  List<Widget> _dialogContent(
+    BuildContext context,
+  ) {
+    return [
+      const SizedBox(height: 32.0),
+      Text(
+        'Instructions',
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      const SizedBox(height: 12.0),
+      const Padding(
+        padding: EdgeInsets.only(left: 8.0),
+        child: Text(
+            'There are 16 hidden cards, with the numbers 1 - 8 each'
+                ' occurring twice. The cards are distributed randomly, '
+                'click to flip the cards and use your memory to match and '
+                'find the same value cards. Try to complete it in lesser '
+                'than 35 moves!\n\n'
+
+        ),
+      ),
+      const SizedBox(height: 2.0),
+      Text(
+        'Credits',
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      const SizedBox(height: 12.0),
+      const Padding(
+        padding: EdgeInsets.only(left: 8.0),
+        child: Text(
+          'Designed and developed by Rajarshi Chakraborty.\n\n'
+
+        ),
+      ),
+      const SizedBox(height: 16.0),
+    ];
   }
 
   @override
@@ -393,18 +487,18 @@ class SimplePuzzleTile extends StatelessWidget {
           },
         ),
         side: MaterialStateBorderSide.resolveWith((states) {
-          if( tile.isFaceUp ){
+          if (tile.isFaceUp) {
             if (state.puzzleIntermediateStatus ==
                 PuzzleIntermediateStatus.wrongMatch) {
               return const BorderSide(
                 color: Colors.red,
-                width: 2,
+                width: 4,
               );
-            } else if ( state.puzzleIntermediateStatus ==
+            } else if (state.puzzleIntermediateStatus ==
                 PuzzleIntermediateStatus.correctMatch) {
               return const BorderSide(
                 color: Colors.green,
-                width: 8,
+                width: 4,
               );
             } else {
               return null;

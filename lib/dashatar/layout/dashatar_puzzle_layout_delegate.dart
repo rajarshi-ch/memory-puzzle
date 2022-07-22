@@ -61,7 +61,7 @@ class DashatarPuzzleLayoutDelegate extends PuzzleLayoutDelegate {
   }
 
   @override
-  Widget backgroundBuilder(PuzzleState state) {
+  Widget backgroundBuilder(PuzzleState state, BuildContext context) {
     return Positioned(
       bottom: 74,
       right: 50,
