@@ -14,7 +14,7 @@ abstract class DashatarTheme extends PuzzleTheme {
   const DashatarTheme() : super();
 
   @override
-  String get name => 'Dashatar';
+  String get name => 'Fancy';
 
   @override
   String get audioControlOnAsset =>
@@ -81,10 +81,12 @@ abstract class DashatarTheme extends PuzzleTheme {
   /// 13  14  15
   ///
   /// The dash asset for the i-th tile may be found in the file i.png.
-  String dashAssetForTile(Tile tile) =>
-      p.join(dashAssetsDirectory, tile.value.isEven
-          ? '${(tile.value-1).toString()}.png'
-          : '${tile.value.toString()}.png', );
+  String dashAssetForTile(Tile tile) => p.join(
+        dashAssetsDirectory,
+        tile.value.isEven
+            ? '${(tile.value - 1).toString()}.png'
+            : '${tile.value.toString()}.png',
+      );
 
   @override
   List<Object?> get props => [
