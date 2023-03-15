@@ -150,14 +150,43 @@ class DashatarPuzzleTileState extends State<DashatarPuzzleTile>
                         unawaited(_audioPlayer?.replay());
                       }
                     : null,
-                icon: Image.asset(
-                  theme.dashAssetForTile(widget.tile),
-                  semanticLabel: context.l10n.puzzleTileLabelText(
-                    widget.tile.value.toString(),
-                    widget.tile.currentPosition.x.toString(),
-                    widget.tile.currentPosition.y.toString(),
-                  ),
-                ),
+                icon: widget.tile.isFaceUp
+                    ? Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 5,
+                            color: MaterialStateColor.resolveWith((states) {
+                              if (widget.state.puzzleIntermediateStatus ==
+                                  PuzzleIntermediateStatus.wrongMatch) {
+                                return Colors.red;
+                              } else if (widget
+                                      .state.puzzleIntermediateStatus ==
+                                  PuzzleIntermediateStatus.correctMatch) {
+                                return Colors.green;
+                              } else {
+                                return Colors.transparent;
+                              }
+                            }),
+                          ),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12)),
+                        ),
+                        child: Image.asset(
+                          theme.dashAssetForTile(widget.tile),
+                          semanticLabel: context.l10n.puzzleTileLabelText(
+                            widget.tile.value.toString(),
+                            widget.tile.currentPosition.x.toString(),
+                            widget.tile.currentPosition.y.toString(),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                          color: theme.defaultColor,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12)),
+                        ),
+                      ),
               ),
             ),
           ),

@@ -34,8 +34,9 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
     );
   }
 
-  void _onTileTapped(TileTapped event, Emitter<PuzzleState> emit) {
+  Future<void> _onTileTapped(TileTapped event, Emitter<PuzzleState> emit) async {
     final tappedTile = event.tile;
+    var delay = const Duration(milliseconds: 1000);
     if (state.puzzleStatus == PuzzleStatus.incomplete) {
       final mutablePuzzle = Puzzle(tiles: [...state.puzzle.tiles]);
       //final puzzle = mutablePuzzle.moveTiles(tappedTile, []);
@@ -45,6 +46,8 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
 
       // Compare tappedTile.value to state.lastTappedTile.value to build logic
       // state.lastTappedTile can be null, if first click
+      
+
       if (puzzle.isComplete()) {
         emit(
           state.copyWith(
@@ -66,7 +69,40 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
             lastTappedTile: tappedTile,
           ),
         );
+
+        /// Id remaining cards are even after a click, that means
+        /// time to compare open cards
+        if(puzzle.getNumberOfRemainingCards().isEven){
+
+          if(puzzle.areTilesMatching()){
+            emit(
+              state.copyWith(puzzleIntermediateStatus:
+              PuzzleIntermediateStatus.correctMatch,),
+            );
+
+            await Future.delayed(delay, () {
+              _removeMatchingCards(emit);
+            });
+          }else {
+            /// After two non matching cards are flipped, flip all cards face down
+            /// after a delay
+            emit(
+              state.copyWith(puzzleIntermediateStatus:
+              PuzzleIntermediateStatus.wrongMatch,),
+            );
+            await Future.delayed(delay, () {
+              _flipAllCardsBack(emit);
+            });
+          }
+
+        } else {
+          emit(
+            state.copyWith(puzzleIntermediateStatus:
+            PuzzleIntermediateStatus.neutral,),
+          );
+        }
       }
+
       if (state.puzzle.isTileMovable(tappedTile)) {
 
       } else {
@@ -79,6 +115,37 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
         state.copyWith(tileMovementStatus: TileMovementStatus.cannotBeMoved),
       );
     }
+  }
+
+  void _flipAllCardsBack(Emitter<PuzzleState> emit){
+    final mutablePuzzle = Puzzle(tiles: [...state.puzzle.tiles]);
+    final puzzle = mutablePuzzle.flipAllTilesBack();
+    emit(
+      state.copyWith(
+        puzzle: puzzle.sort(),
+        puzzleStatus: PuzzleStatus.incomplete,
+        tileMovementStatus: TileMovementStatus.moved,
+        numberOfCorrectTiles: puzzle.getNumberOfCorrectTiles(),
+        numberOfMoves: state.numberOfMoves + 1,
+        lastTappedTile: null,
+      ),
+    );
+  }
+
+  /// Removes matching cards from the board
+  void _removeMatchingCards(Emitter<PuzzleState> emit){
+    final mutablePuzzle = Puzzle(tiles: [...state.puzzle.tiles]);
+    final puzzle = mutablePuzzle.removeMatchingCards();
+    emit(
+      state.copyWith(
+        puzzle: puzzle.sort(),
+        puzzleStatus: PuzzleStatus.incomplete,
+        tileMovementStatus: TileMovementStatus.moved,
+        numberOfCorrectTiles: puzzle.getNumberOfCorrectTiles(),
+        numberOfMoves: state.numberOfMoves + 1,
+        lastTappedTile: null,
+      ),
+    );
   }
 
   void _onPuzzleReset(PuzzleReset event, Emitter<PuzzleState> emit) {
@@ -151,14 +218,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
     final whitespacePosition = Position(x: size, y: size);
     return [
       for (int i = 1; i <= size * size; i++)
-        if (i == size * size)
-          Tile(
-            value: i,
-            correctPosition: whitespacePosition,
-            currentPosition: currentPositions[i - 1],
-            //isWhitespace: true,
-          )
-        else
+
           Tile(
             value: i,
             correctPosition: correctPositions[i - 1],

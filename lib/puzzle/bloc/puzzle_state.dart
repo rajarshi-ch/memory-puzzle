@@ -6,11 +6,14 @@ enum PuzzleStatus { incomplete, complete }
 
 enum TileMovementStatus { nothingTapped, cannotBeMoved, moved }
 
+enum PuzzleIntermediateStatus { neutral , correctMatch , wrongMatch }
+
 class PuzzleState extends Equatable {
   const PuzzleState({
     this.puzzle = const Puzzle(tiles: []),
     this.puzzleStatus = PuzzleStatus.incomplete,
     this.tileMovementStatus = TileMovementStatus.nothingTapped,
+    this.puzzleIntermediateStatus = PuzzleIntermediateStatus.neutral,
     this.numberOfCorrectTiles = 0,
     this.numberOfMoves = 0,
     this.lastTappedTile,
@@ -24,6 +27,9 @@ class PuzzleState extends Equatable {
 
   /// Status indicating if a [Tile] was moved or why a [Tile] was not moved.
   final TileMovementStatus tileMovementStatus;
+
+  /// Status indicating how many cards are facing up in puzzle currently.
+  final PuzzleIntermediateStatus puzzleIntermediateStatus;
 
   /// Represents the last tapped tile of the puzzle.
   ///
@@ -48,6 +54,7 @@ class PuzzleState extends Equatable {
     Puzzle? puzzle,
     PuzzleStatus? puzzleStatus,
     TileMovementStatus? tileMovementStatus,
+    PuzzleIntermediateStatus? puzzleIntermediateStatus,
     int? numberOfCorrectTiles,
     int? numberOfMoves,
     Tile? lastTappedTile,
@@ -56,6 +63,8 @@ class PuzzleState extends Equatable {
       puzzle: puzzle ?? this.puzzle,
       puzzleStatus: puzzleStatus ?? this.puzzleStatus,
       tileMovementStatus: tileMovementStatus ?? this.tileMovementStatus,
+      puzzleIntermediateStatus: puzzleIntermediateStatus
+          ?? this.puzzleIntermediateStatus,
       numberOfCorrectTiles: numberOfCorrectTiles ?? this.numberOfCorrectTiles,
       numberOfMoves: numberOfMoves ?? this.numberOfMoves,
       lastTappedTile: lastTappedTile ?? this.lastTappedTile,
@@ -67,6 +76,7 @@ class PuzzleState extends Equatable {
         puzzle,
         puzzleStatus,
         tileMovementStatus,
+        puzzleIntermediateStatus,
         numberOfCorrectTiles,
         numberOfMoves,
         lastTappedTile,

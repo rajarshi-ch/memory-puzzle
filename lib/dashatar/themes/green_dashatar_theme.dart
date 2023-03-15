@@ -43,5 +43,5 @@ class GreenDashatarTheme extends DashatarTheme {
   String get audioAsset => 'assets/audio/skateboard.mp3';
 
   @override
-  String get dashAssetsDirectory => 'assets/images/dashatar/green';
+  String get dashAssetsDirectory => 'assets/images/dashatar/animals';
 }

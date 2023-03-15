@@ -78,9 +78,20 @@ class Puzzle extends Equatable {
     return numberOfCorrectTiles;
   }
 
+  /// Gets the number of cards that are remaining
+  int getNumberOfRemainingCards() {
+    var numberOfRemainingCards = 0 ;
+    for (final tile in tiles) {
+      if (!tile.isWhitespace && !tile.isFaceUp ) {
+        numberOfRemainingCards++;
+      }
+    }
+    return numberOfRemainingCards;
+  }
+
   /// Determines if the puzzle is completed.
   bool isComplete() {
-    return (tiles.length - 1) - getNumberOfCorrectTiles() == 0;
+    return getNumberOfRemainingCards() == 0;
   }
 
   /// Determines if the tapped tile can move in the direction of the whitespace
@@ -97,6 +108,29 @@ class Puzzle extends Equatable {
       return false;
     }
     return true;
+  }
+
+  /// Determines if the face up cards are matching
+  bool areTilesMatching(){
+    final faceUpTiles = tiles.where((element) => element.isFaceUp).toList();
+    var isMatching = false ;
+    if(faceUpTiles.length != 2) {
+      throw Exception('Tiles checked for match, but two '
+          'face Up tiles not found',);
+    } else {
+      // TODO(raj): Implement matching condition.
+      //if((faceUpTiles[0].value - faceUpTiles[1].value).abs() == 1){
+      var min = faceUpTiles[0].value;
+      var max = faceUpTiles[1].value;
+      if( min > max ){
+        max = min;
+        min = faceUpTiles[1].value;
+      }
+      if(max.isEven && ((max -1) == min)){
+        isMatching = true;
+      }
+    }
+    return isMatching;
   }
 
   /// Determines if the puzzle is solvable.
@@ -215,6 +249,28 @@ class Puzzle extends Equatable {
       // isFaceUp: true,
       isFaceUp: !tile.isFaceUp,
     );
+    return Puzzle(tiles: tiles);
+  }
+
+  /// Returns puzzle with all tiles flipped face down, with same positions
+  Puzzle flipAllTilesBack(){
+    for( var i =0 ; i<tiles.length ; i++){
+      tiles[i] = tiles[i].copyWith(
+        currentPosition: tiles[i].currentPosition,
+        isWhitespace: tiles[i].isWhitespace,
+      );
+    }
+    return Puzzle(tiles: tiles);
+  }
+
+  /// Removes matching cards from the board
+  Puzzle removeMatchingCards(){
+    for( var i =0 ; i<tiles.length ; i++){
+      tiles[i] = tiles[i].copyWith(
+        currentPosition: tiles[i].currentPosition,
+        isWhitespace: tiles[i].isFaceUp ? true : tiles[i].isWhitespace,
+      );
+    }
     return Puzzle(tiles: tiles);
   }
 
