@@ -10,7 +10,7 @@ part 'theme_state.dart';
 
 class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   ThemeBloc({required List<PuzzleTheme> initialThemes})
-      : super(ThemeState(themes: initialThemes)) {
+      : super(ThemeState(themes: initialThemes, theme: initialThemes.first)) {
     on<ThemeChanged>(_onThemeChanged);
     on<ThemeUpdated>(_onThemeUpdated);
   }

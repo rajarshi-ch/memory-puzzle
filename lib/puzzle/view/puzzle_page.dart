@@ -44,8 +44,8 @@ class PuzzlePage extends StatelessWidget {
         BlocProvider(
           create: (context) => ThemeBloc(
             initialThemes: [
-              const SimpleTheme(),
               context.read<DashatarThemeBloc>().state.theme,
+              const SimpleTheme(),
             ],
           ),
         ),
@@ -124,7 +124,6 @@ class _Puzzle extends StatelessWidget {
       builder: (context, constraints) {
         return Stack(
           children: [
-
             SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
@@ -139,9 +138,9 @@ class _Puzzle extends StatelessWidget {
               ),
             ),
             if (theme is SimpleTheme)
-              theme.layoutDelegate.backgroundBuilder(state , context),
+              theme.layoutDelegate.backgroundBuilder(state, context),
             if (theme is! SimpleTheme)
-              theme.layoutDelegate.backgroundBuilder(state , context),
+              theme.layoutDelegate.backgroundBuilder(state, context),
           ],
         );
       },
